@@ -1,6 +1,6 @@
-FROM ubuntu:xenial-20200706
+FROM ubuntu:xenial-20200807
 
-LABEL name="nmoeini/redis:6-xenial-20200706" mainteiner="Navid Moeini <nmoeiny@yahoo.com>" version="0.0"
+LABEL name="nmoeini/redis:6-xenial-20200807" mainteiner="Navid Moeini <nmoeiny@yahoo.com>" version="0.1"
 
 ARG DEBIAN_FRONTEND
 ARG GOSU_VERSION
@@ -98,10 +98,13 @@ RUN set -eux \
 		| sort -u \
 		| xargs -r apt-mark manual \
 	\
-	&& apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
-	\
 	&& redis-cli --version \
-	&& redis-server --version
+	&& redis-server --version \
+##  Clear cache \
+##  -----------------------------------------------------------------------  ## \
+    && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
 RUN mkdir /data && chown "${SVC_USER}":"${SVC_USER}" /data
 VOLUME /data
